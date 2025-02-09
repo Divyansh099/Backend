@@ -1,12 +1,20 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const scrapeData = require("./scraper");
 const cors = require("cors");
+const scrapeData = require("./scraper");
 
 const app = express();
-app.use(bodyParser.json());
-app.use(cors()); // Allow frontend access
+const PORT = process.env.PORT || 5000;
 
+// Middleware
+app.use(cors()); // Allows frontend to access backend
+app.use(express.json()); // Parses JSON requests
+
+// Root Route
+app.get("/", (req, res) => {
+    res.send("Backend is running on Render");
+});
+
+// Scraper API Route
 app.post("/scrape", async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: "URL is required" });
@@ -19,5 +27,7 @@ app.post("/scrape", async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Start Server
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
