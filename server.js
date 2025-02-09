@@ -1,29 +1,23 @@
 const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
 const scrapeData = require("./scraper");
+const cors = require("cors");
 
-dotenv.config();
 const app = express();
-app.use(cors());
+app.use(bodyParser.json());
+app.use(cors()); // Allow frontend access
 
-// Endpoint to check if the backend is running
-app.get("/", (req, res) => {
-  res.send("✅ Backend is running on Render!");
+app.post("/scrape", async (req, res) => {
+    const { url } = req.body;
+    if (!url) return res.status(400).json({ error: "URL is required" });
+
+    try {
+        const data = await scrapeData(url);
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: "Error scraping data" });
+    }
 });
 
-// Endpoint to scrape data
-app.get("/scrape", async (req, res) => {
-  try {
-    const data = await scrapeData();
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: "Scraping failed" });
-  }
-});
-
-// Ensure your app binds to a port (default: 5000)
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

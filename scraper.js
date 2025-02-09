@@ -1,25 +1,25 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 
-const scrapeData = async () => {
-  try {
-    const response = await axios.get("https://www.thebristolhotel.in/"); // Change to target website
-    const $ = cheerio.load(response.data);
-    
-    let results = [];
+const scrapeData = async (url) => {
+    try {
+        const response = await axios.get(url);
+        const $ = cheerio.load(response.data);
+        
+        let results = [];
 
-    $("h2.title").each((index, element) => {
-      results.push({
-        title: $(element).text(),
-        link: $(element).find("a").attr("href"),
-      });
-    });
+        $("a").each((index, element) => {
+            results.push({
+                title: $(element).text().trim() || "No title",
+                link: $(element).attr("href") || "#",
+            });
+        });
 
-    return results;
-  } catch (error) {
-    console.error("Error scraping data:", error);
-    return [];
-  }
+        return results;
+    } catch (error) {
+        console.error("Error scraping data:", error);
+        return [];
+    }
 };
 
 module.exports = scrapeData;
