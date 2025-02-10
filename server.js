@@ -1,33 +1,51 @@
 const express = require("express");
+const axios = require("axios");
+const cheerio = require("cheerio");
 const cors = require("cors");
-const scrapeData = require("./scraper");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors()); // Allows frontend to access backend
-app.use(express.json()); // Parses JSON requests
+app.use(cors()); // Allows frontend to make requests
+app.use(express.json()); // Enables JSON request body parsing
 
-// Root Route
+// API Root Route
 app.get("/", (req, res) => {
-    res.send("Backend is running on Render");
+    res.send("Backend is running on Render!");
 });
 
-// Scraper API Route
+// Web Scraper API Route
 app.post("/scrape", async (req, res) => {
-    const { url } = req.body;
-    if (!url) return res.status(400).json({ error: "URL is required" });
+    const { url } = req.body; // Get the URL from the request
+
+    if (!url) {
+        return res.status(400).json({ error: "Please provide a URL to scrape." });
+    }
 
     try {
-        const data = await scrapeData(url);
-        res.json(data);
+        const response = await axios.get(url);
+        const $ = cheerio.load(response.data);
+
+        let results = [];
+
+        // Extract links and titles
+        $("a").each((index, element) => {
+            const title = $(element).text().trim();
+            const link = $(element).attr("href");
+
+            if (link) {
+                results.push({ title, link });
+            }
+        });
+
+        res.json({ success: true, data: results });
     } catch (error) {
-        res.status(500).json({ error: "Error scraping data" });
+        console.error("Scraping error:", error.message);
+        res.status(500).json({ error: "Failed to scrape the website." });
     }
 });
 
-// Start Server
+// Start the Server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
