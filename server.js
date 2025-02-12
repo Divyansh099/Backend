@@ -7,7 +7,7 @@ const corsAnywhere = require('cors-anywhere');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors()); // Allows frontend to make requests
+app.use(cors({ origin: '*' })); // Allows frontend to make requests from any origin
 app.use(express.json()); // Enables JSON request body parsing
 
 // API Root Route
