@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const cors = require("cors");
+const corsAnywhere = require('cors-anywhere');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -48,4 +49,16 @@ app.post("/scrape", async (req, res) => {
 // Start the Server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+});
+
+// CORS Anywhere Proxy Server
+const corsHost = '0.0.0.0';
+const corsPort = 8080;
+
+corsAnywhere.createServer({
+    originWhitelist: [], // Allow all origins
+    requireHeader: ['origin', 'x-requested-with'],
+    removeHeaders: ['cookie', 'cookie2']
+}).listen(corsPort, corsHost, () => {
+    console.log(`CORS Anywhere server running on ${corsHost}:${corsPort}`);
 });
