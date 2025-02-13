@@ -2,11 +2,36 @@ const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const cors = require('cors');
 const corsAnywhere = require('cors-anywhere');
+const scrapeData = require('./scraper'); // Import the scrapeData function
 
 const app = express();
 
 app.use(cors({ origin: '*' })); // Allows frontend to make requests from any origin
+app.use(express.json()); // Enables JSON request body parsing
 
+// API Root Route
+app.get("/", (req, res) => {
+    res.send("Backend is running on Render!");
+});
+
+// Web Scraper API Route
+app.post("/scrape", async (req, res) => {
+    const { url } = req.body; // Get the URL from the request
+
+    if (!url) {
+        return res.status(400).json({ error: "Please provide a URL to scrape." });
+    }
+
+    try {
+        const data = await scrapeData(url);
+        res.json({ success: true, data });
+    } catch (error) {
+        console.error("Scraping error:", error.message);
+        res.status(500).json({ error: "Failed to scrape the website." });
+    }
+});
+
+// Proxy Middleware
 app.use('/api', createProxyMiddleware({
     target: 'https://developers.google.com',
     changeOrigin: true,
