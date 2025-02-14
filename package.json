@@ -16,6 +16,7 @@
         "cors-anywhere": "^0.4.4",
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
-        "http-proxy-middleware": "^3.0.3"
+        "http-proxy-middleware": "^3.0.3",
+        "morgan": "^1.10.0"
     }
 }
