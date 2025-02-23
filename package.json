@@ -18,5 +18,13 @@
         "express": "^4.21.2",
         "http-proxy-middleware": "^3.0.3",
         "morgan": "^1.10.0"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Divyansh099/Backend.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Divyansh099/Backend/issues"
+    },
+    "homepage": "https://github.com/Divyansh099/Backend#readme"
 }
