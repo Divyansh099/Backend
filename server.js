@@ -32,7 +32,8 @@ app.get('/', (req, res) => {
 });
 
 // Web Scraper API Route
-app.post("/api/scrape", async (req, res) => {
+app.post("/", async (req, res) => {
+
   const { url } = req.body; // Get the URL from the request
 
   if (!url) {
