@@ -2,7 +2,6 @@
 require('dotenv').config();
 
 const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 const cors = require('cors');
 const morgan = require('morgan');
 const corsAnywhere = require('cors-anywhere');
@@ -43,21 +42,6 @@ app.post("/scrape", async (req, res) => {
     res.status(500).json({ error: "Failed to scrape the website." });
   }
 });
-
-// Basic Proxy Middleware for /api endpoint
-// This forwards requests to https://developers.google.com
-app.use('/api', createProxyMiddleware({
-  target: 'https://developers.google.com',
-  changeOrigin: true,
-  pathRewrite: {
-    '^/api': '', // Remove /api prefix when forwarding to target
-  },
-  onProxyRes: (proxyRes, req, res) => {
-    // Ensure CORS headers are present in the proxy response
-    proxyRes.headers['Access-Control-Allow-Origin'] = '*';
-  }
-}));
-
 
 // Start the Express server
 const PORT = process.env.PORT || 3000;
