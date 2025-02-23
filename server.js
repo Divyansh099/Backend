@@ -44,29 +44,20 @@ app.post("/scrape", async (req, res) => {
   }
 });
 
-// Advanced Proxy Middleware for /api endpoint
+// Basic Proxy Middleware for /api endpoint
 // This forwards requests to https://developers.google.com
-if (!process.env.API_KEY) {
-  console.warn("Warning: API_KEY environment variable is not set. Proxy requests may fail.");
-}
 app.use('/api', createProxyMiddleware({
   target: 'https://developers.google.com',
   changeOrigin: true,
   pathRewrite: {
     '^/api': '', // Remove /api prefix when forwarding to target
   },
-  onProxyReq: (proxyReq, req, res) => {
-    // Set the Authorization header if API_KEY is defined
-    if (process.env.API_KEY) {
-      proxyReq.setHeader('Authorization', `Bearer ${process.env.API_KEY}`);
-    }
-  },
   onProxyRes: (proxyRes, req, res) => {
     // Ensure CORS headers are present in the proxy response
     proxyRes.headers['Access-Control-Allow-Origin'] = '*';
-  },
-  logLevel: 'debug', // Enable debug logging for proxy requests
+  }
 }));
+
 
 // Start the Express server
 const PORT = process.env.PORT || 3000;
