@@ -12,8 +12,16 @@ const app = express();
 // Use morgan for HTTP request logging
 app.use(morgan('combined'));
 
-// Enable CORS for all origins
-app.use(cors({ origin: '*' }));
+// Enable CORS for frontend domain
+app.use(cors({
+  origin: 'https://fabulous-florentine-a214a3.netlify.app',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
+// Handle preflight requests
+app.options('*', cors());
+
 
 // Parse JSON bodies for incoming requests
 app.use(express.json());
