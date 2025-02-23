@@ -32,24 +32,39 @@ app.get('/', (req, res) => {
 });
 
 // Web Scraper API Route
-app.post("/scrape", async (req, res) => {
+app.post("/api/scrape", async (req, res) => {
   const { url } = req.body; // Get the URL from the request
 
   if (!url) {
-    return res.status(400).json({ error: "Please provide a URL to scrape." });
+    return res.status(400).json({ 
+      success: false,
+      error: "Please provide a URL to scrape." 
+    });
   }
 
   try {
     const data = await scrapeData(url);
     if (!data) {
-      return res.status(500).json({ error: "Scraping returned no data." });
+      return res.status(500).json({ 
+        success: false,
+        error: "Scraping returned no data." 
+      });
     }
-    res.json({ success: true, data });
+    res.setHeader('Content-Type', 'application/json');
+    res.json({ 
+      success: true, 
+      data 
+    });
   } catch (error) {
     console.error("Scraping error:", error);
-    res.status(500).json({ error: "Failed to scrape the website." });
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to scrape the website.",
+      details: error.message 
+    });
   }
 });
+
 
 // Start the Express server
 const PORT = process.env.PORT || 3000;
